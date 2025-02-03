@@ -1,0 +1,37 @@
+/* Pagination container */
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+/* Individual page items */
+.page-item {
+  margin: 0 5px;
+}
+
+/* Links inside page items */
+.page-link {
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect for page links */
+.page-link:hover {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+}
+
+/* Active page link */
+.active .page-link {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
