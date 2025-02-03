@@ -51,8 +51,10 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    
     fetchCartItems();
-  }, [cartItems.length]);
+    console.log('cartItems',cartItems)
+  }, []);
 
   const logoutHandler = () => {
     localStorage.removeItem("email");

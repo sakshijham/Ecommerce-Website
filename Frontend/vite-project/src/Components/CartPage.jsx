@@ -187,42 +187,42 @@ const CartPage = () => {
   const cartItems = useSelector((state) => state.cart.cart);
   const token = localStorage.getItem('token')
 
-  const fetchCartItems = async () => {
-    try {
-      let userId = localStorage.getItem("userId");
-      const res = await axios.get(`http://localhost:3000/get-cart-items/${userId}`,
-        {
-          headers:{
-             "Authorization":`Bearer ${token}`,
-            "Content-Type":"application/json"
-          },
-        }
-      );
-      // console.log("response data", res.data);
+  // const fetchCartItems = async () => {
+  //   try {
+  //     let userId = localStorage.getItem("userId");
+  //     const res = await axios.get(`http://localhost:3000/get-cart-items/${userId}`,
+  //       {
+  //         headers:{
+  //            "Authorization":`Bearer ${token}`,
+  //           "Content-Type":"application/json"
+  //         },
+  //       }
+  //     );
+  //     // console.log("response data", res.data);
 
-      dispatch(resetCart());
+  //     dispatch(resetCart());
 
-      if (res.data && res.data.length > 0) {
-        res.data.forEach((item) => {
-          dispatch(
-            addToCart({
-              cartId: item.cartId,
-              title: item.product.title,
-              image: item.product.imageUrl,
-              price: item.product.price,
-              quantity: item.quantity,
-            })
-          );
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching cart items", error);
-    }
-  };
+  //     if (res.data && res.data.length > 0) {
+  //       res.data.forEach((item) => {
+  //         dispatch(
+  //           addToCart({
+  //             cartId: item.cartId,
+  //             title: item.product.title,
+  //             image: item.product.imageUrl,
+  //             price: item.product.price,
+  //             quantity: item.quantity,
+  //           })
+  //         );
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching cart items", error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
+  // useEffect(() => {
+  //   fetchCartItems();
+  // }, []);
 
   const removeCartItem = async (cartId, index) => {
     try {
@@ -270,7 +270,13 @@ const CartPage = () => {
         },
       }
     );
-    fetchCartItems();
+     dispatch(addToCart({
+              cartId: res?.data?.data?.cartId,
+              title: res?.data?.data?.product?.title,
+              image: res?.data?.data?.product?.imageUrl,
+              price: res?.data?.data?.product?.price,
+              quantity: res?.data?.data?.quantity
+            }))
 
    } catch (error) {
     console.error('Error incrementing quantity',error);
@@ -288,7 +294,13 @@ const CartPage = () => {
         },
       }
     )
-    fetchCartItems()
+    dispatch(addToCart({
+      cartId: res?.data?.data?.cartId,
+      title: res?.data?.data?.product?.title,
+      image: res?.data?.data?.product?.imageUrl,
+      price: res?.data?.data?.product?.price,
+      quantity: res?.data?.data?.quantity
+    }))
     
    } catch (error) {
      console.error('Error decrementing quantity',error);

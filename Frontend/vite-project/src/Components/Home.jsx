@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import InfiniteScroll from 'react-infinite-scroll-component';
 import '../App.css'
+import { addToCart } from './Reducers/CartSlice';
 
 const Home = () => {
   const [products, setProducts] = useState([])
@@ -22,8 +23,11 @@ const Home = () => {
     getPaginatedProducts(true);
   }, [])
 
-  const addToCart = async (productId) => {
+  const handleAddToCart = async (productId) => {
+    
+    console.log("firsttt")
     try {
+      console.log('products',productId)
       const res = await axios.post('http://localhost:3000/add-to-cart', { userId, productId, quantity: 1 },
         {
           headers: {
@@ -33,15 +37,31 @@ const Home = () => {
         }
       )
 
-      if (res.status === 201 && res.data.msg === 'Product added to cart') {
+      console.log('Post', res);
+     
+      if (res.status === 201 || res.status === 200) {
+        
         dispatch(addToCart({
-          cartId: res.data.cartId,
-          title: res.data.product.title,
-          image: res.data.product.imageUrl,
-          price: res.data.product.price,
-          quantity: res.data.quantity
+          cartId: res?.data?.data?.cartId,
+          title: res?.data?.data?.product?.title,
+          image: res?.data?.data?.product?.imageUrl,
+          price: res?.data?.data?.product?.price,
+          quantity: res?.data?.data?.quantity
         }))
+        const getRes = await axios.get(
+          `http://localhost:3000/get-cart-items/${userId}`,
+          {
+            headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        console.log({getRes})
+   
+
       }
+
     } catch (error) {
       console.error('Error adding to cart', error);
     }
@@ -204,7 +224,7 @@ const Home = () => {
                   </span>
                   <button
                     className="bg-yellow-600 text-white text-sm font-semibold px-3 py-1 rounded-full hover:bg-yellow-700"
-                    onClick={() => addToCart(product.productId)}>
+                    onClick={() => handleAddToCart(product.productId)}>
                     Add to Cart
                   </button>
                 </div>

@@ -37,7 +37,7 @@ export const addToCart : RequestHandler = async(req:Request,res:Response)=>{
         if(cartItem){
             cartItem.quantity += Number(quantity);
             await cartRepo.save(cartItem);
-            res.status(200).json({msg:"Cart updated successfully"});
+            res.status(200).json({msg:"Cart updated successfully" , data:cartItem});
         }else{
             const newCartItem = cartRepo.create({
                 user:{id:userId},
@@ -45,8 +45,12 @@ export const addToCart : RequestHandler = async(req:Request,res:Response)=>{
                 quantity:quantity
             })
 
-            await cartRepo.save(newCartItem);
-            res.status(201).json({msg:"Product added to cart"});
+           await cartRepo.save(newCartItem);
+           const cartData = await cartRepo.findOne({
+            where : {user : {id:userId}, product : {productId:productId}},
+            relations:["user","product"],
+           })
+            res.status(201).json({msg:"Product added to cart", data:cartData});
             return;
         }
 
@@ -190,7 +194,7 @@ export const plusOneQuantity : RequestHandler = async(req:Request,res:Response)=
         cartRepo.save(cartItem);
 
       //  console.log(cartItem);
-        res.status(200).json({msg :"Cart updated successfully"});
+        res.status(200).json({msg :"Cart updated successfully" , data:cartItem});
         return;
         }
         
@@ -221,7 +225,7 @@ export const minusOneQuantity : RequestHandler = async(req:Request,res:Response)
               cartItem.quantity=cartItem.quantity-1;
               cartRepo.save(cartItem);
 
-              res.status(200).json({msg:"cart updated successfully"});
+              res.status(200).json({msg:"cart updated successfully" ,data:cartItem});
               return;
             }
             
