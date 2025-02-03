@@ -50,7 +50,7 @@ export const OrderNow : RequestHandler= async(req:Request,res:Response)=>{
                 user,
                 orderItems,
                 totalAmount,
-                Status:'pending'
+              //  Status:'pending'
 
             })
 

@@ -47,9 +47,7 @@ const Navbar = () => {
     } catch (error) {
       console.error("Error fetching cart items", error);
     } 
-    // finally {
-    //   setLoading(false); 
-    // }
+   
   };
 
   useEffect(() => {

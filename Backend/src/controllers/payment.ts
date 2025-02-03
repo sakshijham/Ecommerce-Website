@@ -36,145 +36,147 @@ export const checkout: RequestHandler = async (req: Request, res: Response) => {
 
 
 
-// export const paymentVerification : RequestHandler = async(req:Request,res:Response)=>{
-//     const razorpayApiKey = process.env.RAZORPAY_API_KEY || "rzp_test_wRzSkjCSAlsBRG" ;
-//     const razorpayApiSecret = process.env.RAZORPAY_API_SECRET || "uv2oh7oirqLSjZOO3tUgbzKt";
+export const paymentVerification : RequestHandler = async(req:Request,res:Response)=>{
+    const razorpayApiKey = process.env.RAZORPAY_API_KEY || "rzp_test_wRzSkjCSAlsBRG" ;
+    const razorpayApiSecret = process.env.RAZORPAY_API_SECRET || "uv2oh7oirqLSjZOO3tUgbzKt";
 
-//     try {
-//         const {razorpay_order_id, razorpay_payment_id,razorpay_signature,userId} = req.body;
+    try {
+        const {razorpay_order_id, razorpay_payment_id,razorpay_signature,userId} = req.body;
 
-//         const body = razorpay_order_id + "|" + razorpay_payment_id;
+        const body = razorpay_order_id + "|" + razorpay_payment_id;
     
-//         const expectedSignature = crypto.createHmac('sha256',razorpayApiSecret)
-//         .update(body.toString())
-//         .digest('hex');
+        const expectedSignature = crypto.createHmac('sha256',razorpayApiSecret)
+        .update(body.toString())
+        .digest('hex');
     
-//         const isAuthentic = expectedSignature === razorpay_signature;
+        const isAuthentic = expectedSignature === razorpay_signature;
     
-//         if(isAuthentic){
-//             const userRepo = AppDataSource.getRepository(User);
-//             const cartRepo = AppDataSource.getRepository(Cart)
-//             const paymentRepo = AppDataSource.getRepository(Payment);
-//             const orderRepo = AppDataSource.getRepository(Order);
-//             const orderItemRepo = AppDataSource.getRepository(OrderItem);
+        if(isAuthentic){
+            const userRepo = AppDataSource.getRepository(User);
+            const cartRepo = AppDataSource.getRepository(Cart)
+            const paymentRepo = AppDataSource.getRepository(Payment);
+            const orderRepo = AppDataSource.getRepository(Order);
+            const orderItemRepo = AppDataSource.getRepository(OrderItem);
     
-//            const user = await userRepo.findOne({where:{id:userId}});
+           const user = await userRepo.findOne({where:{id:userId}});
     
-//            if(!user){
-//             res.status(400).json({msg:"User not found"});
-//             return;
-//            }
-//            console.log('user******************',user)
+           if(!user){
+            res.status(400).json({msg:"User not found"});
+            return;
+           }
+           console.log('user******************',user)
     
-//            const cartItems = await cartRepo.find({
-//             where: { user: { id: userId } },
-//             relations: ["product", "user"]
-//         });
+           const cartItems = await cartRepo.find({
+            where: { user: { id: userId } },
+            relations: ["product", "user"]
+        });
         
     
-//             if(cartItems.length===0){
-//                 res.status(400).json({msg:"cart is empty"})
-//                 return;
-//             }
+            if(cartItems.length===0){
+                res.status(400).json({msg:"cart is empty"})
+                return;
+            }
     
-//             let totalAmount =0;
-//             const orderItems : OrderItem[] = cartItems.map((cartItem)=>{
-//                 totalAmount+=cartItem.product.price*cartItem.quantity;
+            let totalAmount =0;
+            const orderItems : OrderItem[] = cartItems.map((cartItem)=>{
+                totalAmount+=cartItem.product.price*cartItem.quantity;
                     
     
-//                 return orderItemRepo.create({
-//                     product: cartItem.product,
-//                     quantity: cartItem.quantity,
-//                     price: cartItem.product.price,
-//                 });
-//             })
+                return orderItemRepo.create({
+                    product: cartItem.product,
+                    quantity: cartItem.quantity,
+                    price: cartItem.product.price,
+                });
+            })
 
-//             if(orderItems.length===0){
-//                 res.status(400).json({msg:"Order Items are blank"})
-//             }
+            if(orderItems.length===0){
+                res.status(400).json({msg:"Order Items are blank"})
+            }
 
-//             console.log('orderItems **************',orderItems)
+            console.log('orderItems **************',orderItems)
     
           
-//             const newOrder =  orderRepo.create({
-//                 user:user,
-//                 orderItems,
-//                 totalAmount,
+            const newOrder =  orderRepo.create({
+                user:user,
+                orderItems,
+                totalAmount,
     
                 
     
-//             })
+            })
 
            
 
-//             // try {
+            // try {
             
                 
-//             // } catch (saveError) {
-//             //    console.error('Error saving order',saveError);
-//             //    throw saveError; 
-//             // }
+            // } catch (saveError) {
+            //    console.error('Error saving order',saveError);
+            //    throw saveError; 
+            // }
     
          
-//             const savedOrder =  await orderRepo.save(newOrder);
-//             console.log('new order ***************',savedOrder)
-//             const newPayment = paymentRepo.create({
-//                 razorpay_order_id,
-//                 razorpay_payment_id,
-//                 razorpay_signature,
-//                 order:savedOrder
+            const savedOrder =  await orderRepo.save(newOrder);
+            console.log('new order ***************',savedOrder)
+            const newPayment = paymentRepo.create({
+                razorpay_order_id,
+                razorpay_payment_id,
+                razorpay_signature,
+                order:savedOrder
     
-//             });
+            });
 
-//             console.log("Saving Payment******************",newPayment);
-//             try {
-//                 await paymentRepo.save(newPayment);
-//                 console.log('payment saved successfully ^&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&0');
+            console.log("Saving Payment******************",newPayment);
+            try {
+                await paymentRepo.save(newPayment);
+                console.log('payment saved successfully ^&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&0');
 
-//             } catch (paymentError) {
-//                 console.error("Error saving payment:88888888888888888888888888888888888888888888888888888888888888888888888888", paymentError);
-//                 throw paymentError; 
-//             }
+            } catch (paymentError) {
+                console.error("Error saving payment:88888888888888888888888888888888888888888888888888888888888888888888888888", paymentError);
+                throw paymentError; 
+            }
     
             
     
-//             //clear cart after placing order
-//             try {
-//                 await cartRepo.delete({user:{id:userId}});
-//             } catch (cartClearError) {
-//                 console.error("Error clearing cart:", cartClearError);
-//                 throw cartClearError;
-//             }
+            //clear cart after placing order
+            try {
+                console.log('clearing carttttttttttttttttttttt')
+                await cartRepo.delete({user:{id:userId}});
+            } catch (cartClearError) {
+                console.error("Error clearing cart:", cartClearError);
+                throw cartClearError;
+            }
           
     
             
     
-//             // console.log('New payment************************',newPayment);
+            // console.log('New payment************************',newPayment);
     
-//            res.redirect(`http://localhost:5173/paymentsuccess?reference=${razorpay_payment_id}`)
-//         }else{
-//          res.status(400).json({
-//             success:false,
-//             msg:"Invalid Signature"
-//          })
-//         }
+           res.redirect(`http://localhost:5173/paymentsuccess?reference=${razorpay_payment_id}`)
+        }else{
+         res.status(400).json({
+            success:false,
+            msg:"Invalid Signature"
+         })
+        }
     
         
-//     } catch (error) {
-//         console.error("Error during payment verification",error);
-//         res.status(500).json({msg:"Internal Server Error"})
-//     }
+    } catch (error) {
+        console.error("Error during payment verification",error);
+        res.status(500).json({msg:"Internal Server Error"})
+    }
 
     
    
     
-// }
+}
 export const paymentVerification2 : RequestHandler = async(req:Request, res:Response) => {
     const razorpayApiKey = process.env.RAZORPAY_API_KEY || "rzp_test_wRzSkjCSAlsBRG";
     const razorpayApiSecret = process.env.RAZORPAY_API_SECRET || "uv2oh7oirqLSjZOO3tUgbzKt";
 
     try {
-        const {razorpay_order_id, razorpay_payment_id, razorpay_signature, userId} = req.body;
+        const {razorpay_order_id, razorpay_payment_id, razorpay_signature} = req.body;
+        const userId = req.query.userId as string;
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
     
@@ -257,7 +259,7 @@ export const paymentVerification2 : RequestHandler = async(req:Request, res:Resp
 
             if (user) {
                 try {
-                    await cartRepo.delete({ user: user }); 
+                    await cartRepo.delete({ user: {id:userId}}); 
                 } catch (cartClearError) {
                     console.error("Error clearing cart:", cartClearError);
                    

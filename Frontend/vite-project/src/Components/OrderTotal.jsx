@@ -55,7 +55,7 @@ const CartTotal = () => {
         description : "Tutorial of Razorpay",
         image:"https://cdn.razorpay.com/logos/BUVwvgaqVBym2L_medium.png",
         order_id:order.id,
-        callback_url:"http://localhost:3000/paymentVerification",
+        callback_url:`http://localhost:3000/paymentVerification?userId=${userId}`,
         prefill:{
           name:"Sakshi",
           email : 'sakshijhamnani@gmail.com',

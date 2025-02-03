@@ -3,7 +3,7 @@ import { forgetPassword, getUsers, handleUserLogin, handleUserSignUp, resetPassw
 import { AddProducts, DeleteProduct, getProducts, UpdateProduct } from '../controllers/Product';
 import { addToCart, clearCartByUserId, DeleteCartItemByUserId, fetchCartData, minusOneQuantity, plusOneQuantity } from '../controllers/Cart.Controller';
 import { getOrders, OrderNow } from '../controllers/Order';
-import { checkout, getKey, paymentVerification2 } from '../controllers/payment';
+import { checkout, getKey, paymentVerification, paymentVerification2 } from '../controllers/payment';
 import { verifyToken } from '../Middleware/authMiddleware';
 import {authorizeRoles} from '../Middleware/roleMiddleware';
 import { AssignRole, createSuperAdmin } from '../controllers/createSuperAdmin';

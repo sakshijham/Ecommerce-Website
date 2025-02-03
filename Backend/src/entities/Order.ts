@@ -21,8 +21,8 @@ export class Order{
     @Column({type:"decimal",precision:10,scale:2})
     totalAmount :number;
 
-    @Column({type:'varchar',default:'pending'})
-    Status : string;
+    // @Column({type:'varchar',default:'pending'})
+    // Status : string;
  
     @CreateDateColumn()
     createdAt:Date;
